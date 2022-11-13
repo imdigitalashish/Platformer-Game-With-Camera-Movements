@@ -1,4 +1,4 @@
-import { height } from "./constants.js";
+import { floorCollisions, height } from "./constants.js";
 import { Player } from "./player.js";
 import { Sprite } from "./sprite.js";
 import { Vector } from "./vector.js";
@@ -31,7 +31,13 @@ class Game {
 
 
         this.elements = [this.player, this.player2];
+        this.floorCollusions2D = [];
 
+        for (let i = 0; i < floorCollisions.length; i += 36) {
+            this.floorCollusions2D.push(floorCollisions.slice(i, i + 36));
+        }
+
+        console.log(this.floorCollusions2D)
 
 
         this.registerEventListeners();
