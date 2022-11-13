@@ -9,6 +9,16 @@
     <style>
         body {
             background: black;
+            cursor: none;
+        }
+
+        .circle {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: black;
+            border-radius: 50%;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -16,12 +26,21 @@
 <body>
 
 
+    <div class="circle"></div>
+
     <canvas></canvas>
 
 
 
     <script src="script.js" type="module"></script>
 
+
+    <script>
+        document.addEventListener("mousemove", e => {
+            document.querySelector(".circle").style.left = e.clientX + 'px';
+            document.querySelector(".circle").style.top = e.clientY + 'px';
+        })
+    </script>
 
 </body>
 
