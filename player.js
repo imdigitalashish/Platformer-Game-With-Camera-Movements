@@ -1,4 +1,4 @@
-import { gravity } from "./constants.js";
+import { globalScalingFactor, gravity } from "./constants.js";
 import { Vector } from "./vector.js";
 
 export class Player {
@@ -30,15 +30,15 @@ export class Player {
         this.velocity.x = 0;
 
         if (keys.d) {
-            this.velocity.x = 1;
+            this.velocity.x = 2 * globalScalingFactor;
         }
 
         if (keys.a) {
-            this.velocity.x = -1;
+            this.velocity.x = -2 * globalScalingFactor;
         }
 
         if (keys.w) {
-            this.velocity.y = -15;
+            this.velocity.y = -15 * globalScalingFactor;
         }
     }
 }
