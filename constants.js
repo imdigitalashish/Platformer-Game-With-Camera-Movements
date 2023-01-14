@@ -83,7 +83,15 @@ const platformCollisions = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
-const gravity = 1.5 * globalScalingFactor;
+const gravity = 0.2 * globalScalingFactor;
 var height = 0;
 
-export { gravity, height, globalScalingFactor, floorCollisions, platformCollisions };
+
+let collisionDetection = (object1, object2) => {
+    return object1.position.y + object1.height >= object2.position.y &&
+        object1.position.y <= object2.position.y + object2.height &&
+        object1.position.x <= object2.position.x + object2.width &&
+        object1.position.x + object1.width >= object2.position.x
+}
+
+export { gravity, height, globalScalingFactor, floorCollisions, platformCollisions, collisionDetection };

@@ -1,27 +1,25 @@
-import { globalScalingFactor, gravity } from "./constants.js";
+import { collisionDetection, globalScalingFactor, gravity } from "./constants.js";
 import { Vector } from "./vector.js";
 
 export class Player {
-    constructor({ position }) {
+    constructor({ position, collisionBlocks }) {
+        console.log(collisionBlocks)
         this.position = new Vector({ x: position.x, y: position.y });
 
         this.velocity = new Vector({ x: 0, y: 1 });
-        this.height = 100;
+        this.height = 25;
+        this.width = 25;
+        this.collisionBlocks = collisionBlocks;
     }
 
     draw(ctx) {
         ctx.fillStyle = "red";
-        ctx.fillRect(this.position.x, this.position.y, 100, this.height);
+        ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
     }
 
     update(keys) {
-        this.position.y += this.velocity.y;
 
-        if (this.position.y + this.height + this.velocity.y < window.gameHeight) {
-            this.velocity.y += gravity;
-        } else {
-            this.velocity.y = 0;
-        }
+
 
 
         this.position.x += this.velocity.x;
@@ -38,7 +36,58 @@ export class Player {
         }
 
         if (keys.w) {
-            this.velocity.y = -15 * globalScalingFactor;
+            this.velocity.y = -1 * globalScalingFactor;
+        }
+
+        // We need to first check for horizontal collision
+        this.checkForHorizontalCollisions();
+        this.applyGravity();
+        this.checkForVerticalCollisions();
+
+    }
+
+
+    checkForHorizontalCollisions() {
+        this.collisionBlocks.forEach((collisionBlock, index) => {
+            if (collisionDetection(this, collisionBlock)) {
+                if (this.velocity.x > 0) {
+                    this.velocity.x = 0;
+                    this.position.x = collisionBlock.position.x - this.width - 1;
+                    
+                } 
+
+                if (this.velocity.x < 0) {
+                    this.velocity.x = 0;
+                    this.position.x = collisionBlock.position.x + collisionBlock.width + 1;
+                } 
+            }
+        })
+    }
+
+
+    checkForVerticalCollisions() {
+        this.collisionBlocks.forEach((collisionBlock, index) => {
+            if (collisionDetection(this, collisionBlock)) {
+                if (this.velocity.y > 0) {
+                    this.velocity.y = 0;
+                    this.position.y = collisionBlock.position.y - this.height - 0.01;
+                } 
+
+                if (this.velocity.y < 0) {
+                    this.velocity.y = 0;
+                    this.position.y = collisionBlock.position.y + collisionBlock.height + 0.01;
+                } 
+            }
+        })
+    }
+
+    applyGravity() {
+        this.position.y += this.velocity.y;
+
+        if (this.position.y + this.height + this.velocity.y < window.gameHeight) {
+            this.velocity.y += gravity;
+        } else {
+            this.velocity.y = 0;
         }
     }
 }
