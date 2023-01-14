@@ -1,4 +1,5 @@
-import { floorCollisions, height } from "./constants.js";
+import { CollisionDetection } from "./CollisionsBlock.js";
+import { floorCollisions, height, platformCollisions } from "./constants.js";
 import { Player } from "./player.js";
 import { Sprite } from "./sprite.js";
 import { Vector } from "./vector.js";
@@ -31,14 +32,50 @@ class Game {
 
 
         this.elements = [this.player, this.player2];
-        this.floorCollusions2D = [];
 
+
+
+        this.floorCollisions2D = [];
         for (let i = 0; i < floorCollisions.length; i += 36) {
-            this.floorCollusions2D.push(floorCollisions.slice(i, i + 36));
+            this.floorCollisions2D.push(floorCollisions.slice(i, i + 36));
+        }
+        
+
+
+
+        this.collisionsBlocks = [];
+        this.floorCollisions2D.forEach((row, y) => {
+            row.forEach((symbol, x) => {
+                if (symbol == 202) {
+                    this.collisionsBlocks.push(
+                        new CollisionDetection({
+                            position: new Vector({ x: x * 16, y: y * 16 })
+                        })
+                    );
+                }
+            })
+        })
+
+        this.platformCollisions2D = [];
+        for (let i = 0; i < platformCollisions.length; i += 36) {
+            this.platformCollisions2D.push(platformCollisions.slice(i, i + 36));
         }
 
-        console.log(this.floorCollusions2D)
 
+        this.platformCollisionBlocks = [];
+        this.platformCollisions2D.forEach((row, y) => {
+            row.forEach((symbol, x) => {
+                if (symbol == 202) {
+                    this.platformCollisionBlocks.push(
+                        new CollisionDetection({
+                            position: new Vector({ x: x * 16, y: y * 16 })
+                        })
+                    );
+                }
+            })
+        })
+        
+      
 
         this.registerEventListeners();
 
@@ -64,7 +101,12 @@ class Game {
         this.elements.forEach((e) => {
             e.update(this.keys);
         })
-
+        this.collisionsBlocks.forEach(collisionBlock => {
+            collisionBlock.update(this.ctx);
+        })
+        this.platformCollisionBlocks.forEach(collisionBlock => {
+            collisionBlock.update(this.ctx);
+        })
     }
 
     render(ts) {
@@ -87,12 +129,20 @@ class Game {
         this.ctx.scale(4, 4);
         this.ctx.translate(0, -this.background.image.height + this.scaledCanvas.height)
         this.background.draw(this.ctx);
+        this.collisionsBlocks.forEach(collisionBlock => {
+            collisionBlock.draw(this.ctx);
+        })
+        this.platformCollisionBlocks.forEach(block =>{ 
+            block.draw(this.ctx)
+        })
         this.ctx.restore();
 
         // DRAWING ENGINE
         this.elements.forEach((e) => {
             e.draw(this.ctx);
         })
+
+ 
     }
 }
 
