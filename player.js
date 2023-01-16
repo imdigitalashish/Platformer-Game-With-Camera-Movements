@@ -3,7 +3,7 @@ import { Sprite } from "./sprite.js";
 import { Vector } from "./vector.js";
 
 export class Player extends Sprite {
-    constructor({ position, collisionBlocks, imageSrc, frameRate, scale = 0.5 }) {
+    constructor({ position, collisionBlocks, imageSrc, frameRate, scale = 0.5, animations }) {
         super({ imageSrc, frameRate, scale });
         console.log(collisionBlocks)
         this.position = new Vector({ x: position.x, y: position.y });
@@ -11,6 +11,8 @@ export class Player extends Sprite {
         this.velocity = new Vector({ x: 0, y: 1 });
         // this.height = 25;
         // this.width = 25;
+        this.lastDirection = "right";
+
         this.collisionBlocks = collisionBlocks;
         this.hitBox = {
             position: {
@@ -19,7 +21,16 @@ export class Player extends Sprite {
             },
             width: 10,
             height: 10,
+        },
+            this.animations = animations;
+
+        for (let key in this.animations) {
+            const image = new Image();
+            image.src = this.animations[key].imageSrc;
+            this.animations[key].image = image;
+
         }
+
     }
 
 
@@ -40,6 +51,12 @@ export class Player extends Sprite {
     //     ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
     // }
 
+
+    switchSprite(key) {
+        if (this.image === this.animations[key].image) return;
+        this.image = this.animations[key].image;
+    }
+
     update(keys, ctx) {
 
 
@@ -54,17 +71,33 @@ export class Player extends Sprite {
 
         this.velocity.x = 0;
 
+        if (this.lastDirection == "right") {
+            this.switchSprite('Idle');
+
+        } else {
+            this.switchSprite("IdleLeft");
+        }
         if (keys.d) {
+            this.switchSprite('Run');
+
             this.velocity.x = 2 * globalScalingFactor;
+            this.lastDirection = "right";
         }
 
         if (keys.a) {
+            this.switchSprite("RunLeft");
             this.velocity.x = -2 * globalScalingFactor;
+            this.lastDirection = "left";
         }
 
         if (keys.w) {
+
             this.velocity.y = -4 * globalScalingFactor;
         }
+
+        // if (this.velocity.y < 0) {
+        //     this.switchSprite("Jump")
+        // }
 
         // We need to first check for horizontal collision
         this.updateHitBox();

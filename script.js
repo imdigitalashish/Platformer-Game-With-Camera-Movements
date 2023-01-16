@@ -64,7 +64,25 @@ class Game {
             position: { x: this.canvas.width / 9.3, y: this.canvas.height / 2.7, },
             collisionBlocks: this.collisionsBlocks,
             imageSrc: "./assets/warrior/Idle.png",
-            frameRate: 8
+            frameRate: 8,
+            animations: {
+                Idle: {
+                    imageSrc: "./assets/warrior/Idle.png",
+                    frameRate: 8,
+                },
+                Run: {
+                    imageSrc: "./assets/warrior/Run.png",
+                    frameRate: 8,
+                },
+                RunLeft: {
+                    imageSrc: "./assets/warrior/RunLeft.png",
+                    frameRate: 8,
+                },
+                IdleLeft: {
+                    imageSrc: "./assets/warrior/IdleLeft.png",
+                    frameRate: 8,
+                }
+            }
         });
         this.keys = {};
 
