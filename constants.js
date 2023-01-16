@@ -83,7 +83,7 @@ const platformCollisions = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
-const gravity = 0.2 * globalScalingFactor;
+const gravity = 0.7 * globalScalingFactor;
 var height = 0;
 
 

@@ -1,21 +1,24 @@
 import { collisionDetection, globalScalingFactor, gravity } from "./constants.js";
+import { Sprite } from "./sprite.js";
 import { Vector } from "./vector.js";
 
-export class Player {
-    constructor({ position, collisionBlocks }) {
+export class Player extends Sprite {
+    constructor({ position, collisionBlocks, imageSrc, frameRate }) {
+        super({imageSrc, frameRate});
         console.log(collisionBlocks)
         this.position = new Vector({ x: position.x, y: position.y });
 
         this.velocity = new Vector({ x: 0, y: 1 });
-        this.height = 25;
-        this.width = 25;
+        // this.height = 25;
+        // this.width = 25;
         this.collisionBlocks = collisionBlocks;
     }
 
-    draw(ctx) {
-        ctx.fillStyle = "red";
-        ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
-    }
+    // We don't need this because we are taking method from sprit.js which have image draw method !
+    // draw(ctx) {
+    //     ctx.fillStyle = "red";
+    //     ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+    // }
 
     update(keys) {
 
@@ -36,7 +39,7 @@ export class Player {
         }
 
         if (keys.w) {
-            this.velocity.y = -1 * globalScalingFactor;
+            this.velocity.y = -4 * globalScalingFactor;
         }
 
         // We need to first check for horizontal collision

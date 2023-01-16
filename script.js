@@ -60,7 +60,12 @@ class Game {
         window.gameHeight = this.canvas.height;
 
 
-        this.player = new Player({ position: { x: this.canvas.width / 9.3, y: 0, }, collisionBlocks: this.collisionsBlocks });
+        this.player = new Player({
+            position: { x: this.canvas.width / 9.3, y: this.canvas.height / 2.7 , },
+            collisionBlocks: this.collisionsBlocks,
+            imageSrc: "./assets/warrior/Idle.png",
+            frameRate: 8
+        });
         this.keys = {};
 
 
@@ -143,7 +148,7 @@ class Game {
 
 
         // DRAWING ENGINE
-      
+
 
 
     }
