@@ -104,7 +104,7 @@ class Game {
 
     update() {
         this.elements.forEach((e) => {
-            e.update(this.keys);
+            e.update(this.keys, this.ctx);
         })
         this.collisionsBlocks.forEach(collisionBlock => {
             collisionBlock.update(this.ctx);

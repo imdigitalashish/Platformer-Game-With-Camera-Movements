@@ -13,12 +13,16 @@ export class Sprite {
         this.image.src = imageSrc;
         this.frameRate = frameRate;
         this.currentFrame = 0;
+        
     }
 
 
     draw(ctx) {
 
         if (!this.image) return; // prevents from happening undefined
+
+        
+
 
 
         const cropbox = {
@@ -40,6 +44,7 @@ export class Sprite {
         }
 
 
+      
         ctx.drawImage(this.image,
             cropbox.position.x,
             cropbox.position.y,
