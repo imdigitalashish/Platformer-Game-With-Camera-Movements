@@ -11,13 +11,13 @@ class Game {
         this.ctx = this.canvas.getContext('2d');
         this.canvas.width = 1024;
         this.canvas.height = 576;
+        this.frameBuffer = 40;
+
+
         this.floorCollisions2D = [];
         for (let i = 0; i < floorCollisions.length; i += 36) {
             this.floorCollisions2D.push(floorCollisions.slice(i, i + 36));
         }
-
-
-
 
         this.collisionsBlocks = [];
         this.floorCollisions2D.forEach((row, y) => {
@@ -61,7 +61,7 @@ class Game {
 
 
         this.player = new Player({
-            position: { x: this.canvas.width / 9.3, y: this.canvas.height / 2.7 , },
+            position: { x: this.canvas.width / 9.3, y: this.canvas.height / 2.7, },
             collisionBlocks: this.collisionsBlocks,
             imageSrc: "./assets/warrior/Idle.png",
             frameRate: 8
@@ -111,7 +111,9 @@ class Game {
         })
         this.platformCollisionBlocks.forEach(collisionBlock => {
             collisionBlock.update(this.ctx);
-        })
+        });
+
+        this.background.update(this.keys);
     }
 
     render(ts) {
@@ -119,7 +121,7 @@ class Game {
 
 
         // UPDATE ENGINE
-        if (Date.now() - this.lasTick > 40) {
+        if (Date.now() - this.lasTick > this.frameBuffer) {
             this.update();
             this.lasTick = Date.now();
         }

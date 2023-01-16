@@ -1,16 +1,18 @@
 import { Player } from "./player.js";
 
 export class Sprite {
-    constructor({ position, imageSrc, frameRate = 1 }) {
+    constructor({ position, imageSrc, frameRate = 1, scale = 1 }) {
+        this.scale = scale;
         this.position = position;
         this.image = new Image();
 
         this.image.onload = () => {
-            this.width = this.image.width / this.frameRate; // go get the same width as the crop box
-            this.height = this.image.height;
+            this.width = (this.image.width / this.frameRate) * this.scale; // go get the same width as the crop box
+            this.height = this.image.height * this.scale;
         }
         this.image.src = imageSrc;
-        this.frameRate = frameRate
+        this.frameRate = frameRate;
+        this.currentFrame = 0;
     }
 
 
@@ -21,7 +23,10 @@ export class Sprite {
 
         const cropbox = {
             position: {
-                x: 0,
+                /**
+                 * (this.image.width / this.frameRate) <- this entire quantity actually represents the whole crop box size
+                 */
+                x: this.currentFrame * (this.image.width / this.frameRate),
                 y: 0
             },
             /**
@@ -30,8 +35,8 @@ export class Sprite {
              * but it only has 1 frames so it will strech
              * so this property needs to be dynamic 
              */
-            width: this.image.width / this.frameRate, 
-            height: this.image.height ,
+            width: this.image.width / this.frameRate,
+            height: this.image.height,
         }
 
 
@@ -49,7 +54,13 @@ export class Sprite {
     }
 
     update(keys) {
+        this.updateFrames();
+    }
 
+
+    updateFrames() {
+        if (this.currentFrame < this.frameRate - 1) this.currentFrame++;
+        else this.currentFrame = 0;
     }
 
 }

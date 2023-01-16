@@ -3,8 +3,8 @@ import { Sprite } from "./sprite.js";
 import { Vector } from "./vector.js";
 
 export class Player extends Sprite {
-    constructor({ position, collisionBlocks, imageSrc, frameRate }) {
-        super({imageSrc, frameRate});
+    constructor({ position, collisionBlocks, imageSrc, frameRate, scale = 0.5 }) {
+        super({imageSrc, frameRate, scale});
         console.log(collisionBlocks)
         this.position = new Vector({ x: position.x, y: position.y });
 
@@ -21,9 +21,7 @@ export class Player extends Sprite {
     // }
 
     update(keys) {
-
-
-
+        this.updateFrames();
 
         this.position.x += this.velocity.x;
 
