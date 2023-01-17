@@ -62,7 +62,7 @@ class Game {
 
 
         this.player = new Player({
-            position: { x: this.canvas.width / 9.3, y: this.canvas.height / 2.7, },
+            position: { x: this.canvas.width / 9.3, y: this.canvas.height - 200, },
             collisionBlocks: this.collisionsBlocks,
             platformCollisionBlocks: this.platformCollisionBlocks,
             imageSrc: "./assets/warrior/Idle.png",
@@ -106,10 +106,12 @@ class Game {
 
         requestAnimationFrame(this.render.bind(this));
 
+        this.backgroundImageHeight = 432; //this.background.image.height
+
         this.camera = {
             position: {
                 x: 0,
-                y: 0,
+                y: -this.backgroundImageHeight + this.scaledCanvas.height,
             }
         }
     }
@@ -118,13 +120,13 @@ class Game {
     registerEventListeners() {
         window.addEventListener("keydown", (e) => {
             this.keys[e.key] = true;
-          
+
         });
         window.addEventListener("keyup", (e) => {
             this.keys[e.key] = false;
         })
 
-    
+
     }
 
 
@@ -146,15 +148,32 @@ class Game {
         this.background.update(this.keys);
 
 
-        if(this.keys.d) {
-            if (this.player.spanCameraToLeft) {
-                this.camera.position.x -= this.player.velocity.x
-            }
+        if (this.keys.d) {
+            this.player.spanCameraToLeft = this.player.shouldPanCameraToTheLeft({ camera: this.camera });
+
+            // if (this.player.spanCameraToLeft) {
+            // }
         }
+
+        if (this.keys.a) {
+            this.player.shouldPanCameraToRight({ camera: this.camera });
+        }
+
+        if (this.player.velocity.y < 0) {
+            console.log(this.player.velocity.y);
+            this.player.shouldPanCameraDown({ camera: this.camera });
+
+        }
+        if (this.player.velocity.y > 0 ) {
+            this.player.shouldPanCameraUp({camera: this.camera});
+        }
+
 
     }
 
     render(ts) {
+
+        console.log(`Camera position: ${this.camera.position.y}, Player: ${this.player.cameraBox.position.y}`)
         requestAnimationFrame(this.render.bind(this));
 
 
@@ -172,14 +191,17 @@ class Game {
         // CODE ENGINE
         this.ctx.save();
         this.ctx.scale(4, 4);
-        this.ctx.translate(this.camera.position.x, -this.background.image.height + this.scaledCanvas.height)
+        this.ctx.translate(this.camera.position.x, this.camera.position.y);
+        // this.ctx.translate(this.camera.position.x, -this.background.image.height + this.scaledCanvas.height)
         this.background.draw(this.ctx);
-        this.collisionsBlocks.forEach(collisionBlock => {
-            collisionBlock.draw(this.ctx);
-        })
-        this.platformCollisionBlocks.forEach(block => {
-            block.draw(this.ctx)
-        })
+
+        //REMOVING DEBUG RECTANGLES
+        // this.collisionsBlocks.forEach(collisionBlock => {
+        //     collisionBlock.draw(this.ctx);
+        // })
+        // this.platformCollisionBlocks.forEach(block => {
+        //     block.draw(this.ctx)
+        // })
         this.elements.forEach((e) => {
             e.draw(this.ctx);
         })
