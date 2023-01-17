@@ -3,7 +3,15 @@ import { Sprite } from "./sprite.js";
 import { Vector } from "./vector.js";
 
 export class Player extends Sprite {
-    constructor({ position, collisionBlocks, imageSrc, frameRate, scale = 0.5, animations }) {
+    constructor({
+        position,
+        collisionBlocks,
+        platformCollisionBlocks,
+        imageSrc,
+        frameRate,
+        scale = 0.5,
+        animations
+    }) {
         super({ imageSrc, frameRate, scale });
         console.log(collisionBlocks)
         this.position = new Vector({ x: position.x, y: position.y });
@@ -14,6 +22,7 @@ export class Player extends Sprite {
         this.lastDirection = "right";
 
         this.collisionBlocks = collisionBlocks;
+        this.platformCollisionBlocks = platformCollisionBlocks;
         this.hitBox = {
             position: {
                 x: this.position.x,
@@ -31,6 +40,40 @@ export class Player extends Sprite {
 
         }
 
+        this.cameraBox = {
+            position: {
+                x: this.position.x,
+                y: this.position.y,
+            },
+            width: 200,
+            height: 80,
+        }
+
+        this.spanCameraToLeft = false;
+
+    }
+
+    updateCamerabox() {
+        this.cameraBox = {
+            position: {
+                x: this.position.x - 50,
+                y: this.position.y,
+            },
+            width: 200,
+            height: 80,
+        }
+
+    }
+
+    shouldPanCameraToTheLeft() {
+        const cameraboxRightSide = this.cameraBox.position.x + this.cameraBox.width;
+        const scaledDownCanvasWidth = canvasD.width / 4
+        if (cameraboxRightSide >= scaledDownCanvasWidth) {
+            console.log("translate to the left");
+            
+            return true;
+        }
+        return false;
     }
 
 
@@ -62,9 +105,7 @@ export class Player extends Sprite {
 
 
         this.updateFrames();
-
-
-
+        this.updateCamerabox();
 
         this.position.x += this.velocity.x;
 
@@ -82,6 +123,7 @@ export class Player extends Sprite {
 
             this.velocity.x = 2 * globalScalingFactor;
             this.lastDirection = "right";
+            this.spanCameraToLeft = this.shouldPanCameraToTheLeft();
         }
 
         if (keys.a) {
@@ -137,11 +179,57 @@ export class Player extends Sprite {
                 }
             }
         })
+
+
+        this.platformCollisionBlocks.forEach((collisionBlock, index) => {
+
+            if (collisionDetection(this.hitBox, collisionBlock)) {
+                console.log("COLLIDE");
+                if (this.velocity.x > 0) {
+                    this.velocity.x = 0;
+                    const offset = this.hitBox.position.x - this.position.x + this.hitBox.width;
+
+                    this.position.x = collisionBlock.position.x - offset - 0.08;
+                    return;
+
+                }
+
+                if (this.velocity.x < 0) {
+                    this.velocity.x = 0;
+
+                    const offset = this.hitBox.position.x - this.position.x;
+
+
+                    this.position.x = collisionBlock.position.x + collisionBlock.width - offset + 0.08;
+                    return;
+                }
+            }
+        })
     }
 
 
     checkForVerticalCollisions() {
         this.collisionBlocks.forEach((collisionBlock, index) => {
+            if (collisionDetection(this.hitBox, collisionBlock)) {
+                if (this.velocity.y > 0) {
+                    this.velocity.y = 0;
+
+                    const offset = this.hitBox.position.y - this.position.y + this.hitBox.height;
+
+                    this.position.y = collisionBlock.position.y - offset - 0.01;
+                }
+
+                if (this.velocity.y < 0) {
+                    this.velocity.y = 0;
+                    const offset = this.hitBox.position.y - this.position.y;
+
+                    this.position.y = collisionBlock.position.y + collisionBlock.height - offset + 0.01;
+                }
+            }
+        })
+
+
+        this.platformCollisionBlocks.forEach((collisionBlock, index) => {
             if (collisionDetection(this.hitBox, collisionBlock)) {
                 if (this.velocity.y > 0) {
                     this.velocity.y = 0;

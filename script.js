@@ -44,7 +44,8 @@ class Game {
                 if (symbol == 202) {
                     this.platformCollisionBlocks.push(
                         new CollisionDetection({
-                            position: new Vector({ x: x * 16, y: y * 16 })
+                            position: new Vector({ x: x * 16, y: y * 16 }),
+                            height: 4,
                         })
                     );
                 }
@@ -63,6 +64,7 @@ class Game {
         this.player = new Player({
             position: { x: this.canvas.width / 9.3, y: this.canvas.height / 2.7, },
             collisionBlocks: this.collisionsBlocks,
+            platformCollisionBlocks: this.platformCollisionBlocks,
             imageSrc: "./assets/warrior/Idle.png",
             frameRate: 8,
             animations: {
@@ -102,17 +104,27 @@ class Game {
 
         this.registerEventListeners();
 
-        requestAnimationFrame(this.render.bind(this))
+        requestAnimationFrame(this.render.bind(this));
+
+        this.camera = {
+            position: {
+                x: 0,
+                y: 0,
+            }
+        }
     }
 
 
     registerEventListeners() {
         window.addEventListener("keydown", (e) => {
             this.keys[e.key] = true;
+          
         });
         window.addEventListener("keyup", (e) => {
             this.keys[e.key] = false;
         })
+
+    
     }
 
 
@@ -132,6 +144,14 @@ class Game {
         });
 
         this.background.update(this.keys);
+
+
+        if(this.keys.d) {
+            if (this.player.spanCameraToLeft) {
+                this.camera.position.x -= this.player.velocity.x
+            }
+        }
+
     }
 
     render(ts) {
@@ -152,7 +172,7 @@ class Game {
         // CODE ENGINE
         this.ctx.save();
         this.ctx.scale(4, 4);
-        this.ctx.translate(0, -this.background.image.height + this.scaledCanvas.height)
+        this.ctx.translate(this.camera.position.x, -this.background.image.height + this.scaledCanvas.height)
         this.background.draw(this.ctx);
         this.collisionsBlocks.forEach(collisionBlock => {
             collisionBlock.draw(this.ctx);
